@@ -54,7 +54,7 @@
                 <i v-if="product.rating % 1 >= 0.5" class="fas fa-star-half-alt"></i>
               </div>
               <span class="text-gray-600 text-sm"
-                >{{ product.rating }} ({{ product.reviewsCount }} avis)</span
+                >{{ product.rating }} ({{ product.reviews }} avis)</span
               >
             </div>
             <div>
@@ -67,36 +67,6 @@
                 class="ml-2 bg-orange-100 text-[#F4A300] text-sm font-semibold px-2 py-1 rounded"
                 >{{ product.discount }}% OFF</span
               >
-            </div>
-            <p class="text-gray-700">{{ product.shortDescription }}</p>
-            <!-- Spécifications techniques -->
-            <div>
-              <button
-                @click="showSpecs = !showSpecs"
-                class="flex items-center font-semibold text-gray-900 hover:text-blue-700"
-              >
-                <span>Spécifications techniques</span>
-                <i
-                  :class="[
-                    'ml-2 transition-transform',
-                    showSpecs ? 'fas fa-chevron-up' : 'fas fa-chevron-down',
-                  ]"
-                ></i>
-              </button>
-              <div v-show="showSpecs" class="mt-2">
-                <table class="w-full text-sm text-gray-700">
-                  <tbody>
-                    <tr
-                      v-for="(val, key) in product.specs"
-                      :key="key"
-                      class="border-b border-gray-100"
-                    >
-                      <td class="py-2 font-medium">{{ key }}</td>
-                      <td class="py-2">{{ val }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
             </div>
             <!-- Sélecteur de quantité et actions -->
             <div class="flex items-center gap-4">
@@ -151,7 +121,35 @@
           </div>
         </div>
       </div>
-      <!-- Les sections avis et recommandations seront ajoutées à l'étape suivante -->
+      <!-- Card Détail produit & Fiche technique -->
+      <div class="max-w-2xl mx-auto mt-10">
+        <div class="bg-white rounded-xl shadow-md p-8">
+          <h2 class="text-xl font-bold text-gray-900 mb-2">Détail du produit</h2>
+          <p class="text-gray-700 mb-4">{{ product.description }}</p>
+          <button
+            @click="showSpecs = !showSpecs"
+            class="flex items-center font-semibold text-gray-900 hover:text-blue-700 mb-2"
+          >
+            <span>Fiche technique</span>
+            <i
+              :class="[
+                'ml-2 transition-transform',
+                showSpecs ? 'fas fa-chevron-up' : 'fas fa-chevron-down',
+              ]"
+            ></i>
+          </button>
+          <div v-show="showSpecs" class="mt-2">
+            <table class="w-full text-sm text-gray-700">
+              <tbody>
+                <tr v-for="(val, key) in product.specs" :key="key" class="border-b border-gray-100">
+                  <td class="py-2 font-medium">{{ key }}</td>
+                  <td class="py-2">{{ val }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
       <!-- Section Avis Clients -->
       <div class="mt-16 bg-white rounded-xl shadow-md p-8">
         <div class="flex justify-between items-center mb-8">
@@ -244,7 +242,7 @@
             class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
           >
             <div class="relative">
-              <img :src="rec.img" :alt="rec.name" class="w-full h-48 object-cover" />
+              <img :src="rec.image" :alt="rec.name" class="w-full h-48 object-cover" />
               <button class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
                 <i class="far fa-heart text-xl"></i>
               </button>
@@ -255,11 +253,12 @@
                 <div class="flex text-yellow-400 text-xs mr-1">
                   <i
                     class="fas fa-star"
-                    v-for="n in rec.stars"
+                    v-for="n in Math.floor(rec.rating)"
                     :key="'rec-star-' + idx + '-' + n"
                   ></i>
+                  <i v-if="rec.rating % 1 >= 0.5" class="fas fa-star-half-alt"></i>
                 </div>
-                <span class="text-gray-500 text-xs">({{ rec.reviews }})</span>
+                <span class="text-gray-500 text-xs">({{ rec.reviewsCount }})</span>
               </div>
               <div class="flex items-center">
                 <span class="text-lg font-bold text-[#0071BC]">{{ rec.price }} XAF</span>
@@ -286,18 +285,18 @@
               :key="idx"
               class="flex flex-col items-center w-56 bg-gray-50 rounded-lg shadow-sm p-4 relative"
             >
-              <img :src="item.img" :alt="item.name" class="w-32 h-32 object-cover rounded mb-2" />
+              <img :src="item.image" :alt="item.name" class="w-32 h-32 object-cover rounded mb-2" />
               <h3 class="font-semibold text-gray-900 mb-1 text-center">{{ item.name }}</h3>
               <div class="flex items-center mb-2">
                 <div class="flex text-yellow-400 text-xs mr-1">
                   <i
                     class="fas fa-star"
-                    v-for="n in Math.floor(item.stars)"
+                    v-for="n in Math.floor(item.rating)"
                     :key="'bt-star-' + idx + '-' + n"
                   ></i>
-                  <i v-if="item.stars % 1 >= 0.5" class="fas fa-star-half-alt"></i>
+                  <i v-if="item.rating % 1 >= 0.5" class="fas fa-star-half-alt"></i>
                 </div>
-                <span class="text-gray-500 text-xs">({{ item.reviews }})</span>
+                <span class="text-gray-500 text-xs">({{ item.reviewsCount }})</span>
               </div>
               <div class="flex items-center mb-2">
                 <span class="text-lg font-bold text-[#0071BC]">{{ item.price }} XAF</span>
@@ -347,9 +346,7 @@ export default {
     // Générer un tableau d'images fictives pour la galerie
     const images = computed(() => {
       if (!product.value) return []
-      // Utilise l'image principale + variantes fictives
       const base = product.value.image
-      // On génère 4 images différentes (ou la même si pas de variantes)
       return [
         base,
         base.replace('300x200', '300x200').replace('text=', 'text=Vue+2+'),
@@ -357,7 +354,17 @@ export default {
         base.replace('300x200', '300x200').replace('text=', 'text=Vue+4+'),
       ]
     })
-    return { product, images }
+    // Recommandations (4 produits aléatoires hors produit courant)
+    const recommendations = computed(() => {
+      if (!product.value) return []
+      return productsStore.products.filter((p) => p.id !== product.value.id).slice(0, 4)
+    })
+    // Souvent achetés ensemble (3 produits aléatoires hors produit courant)
+    const boughtTogether = computed(() => {
+      if (!product.value) return []
+      return productsStore.products.filter((p) => p.id !== product.value.id).slice(4, 7)
+    })
+    return { product, images, recommendations, boughtTogether }
   },
   methods: {
     increment() {
