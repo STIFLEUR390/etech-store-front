@@ -121,8 +121,8 @@
           </div>
         </div>
       </div>
-      <!-- Card Détail produit & Fiche technique -->
-      <div class="max-w-2xl mx-auto mt-10">
+      <!-- Card Détail produit & Fiche technique sur toute la largeur -->
+      <div class="w-full mt-10">
         <div class="bg-white rounded-xl shadow-md p-8">
           <h2 class="text-xl font-bold text-gray-900 mb-2">Détail du produit</h2>
           <p class="text-gray-700 mb-4">{{ product.description }}</p>
@@ -192,15 +192,22 @@
             :key="idx"
             class="bg-gray-50 rounded-lg p-6 shadow-sm"
           >
-            <div class="flex justify-between mb-2">
-              <div class="flex items-center">
+            <div class="flex justify-between mb-2 items-center">
+              <div class="flex items-center gap-3">
+                <img
+                  v-if="review.photo"
+                  :src="review.photo"
+                  alt="Photo de {{ review.user }}"
+                  class="w-12 h-12 rounded-full object-cover border-2 border-white shadow"
+                />
                 <div
-                  class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-bold mr-3"
+                  v-else
+                  class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-bold text-lg"
                 >
                   {{ review.initials }}
                 </div>
                 <div>
-                  <div class="font-semibold">{{ review.user }}</div>
+                  <div class="font-semibold text-gray-900">{{ review.user }}</div>
                   <div class="flex text-yellow-400 text-sm">
                     <i
                       class="fas fa-star"
@@ -336,6 +343,59 @@ export default {
       selectedImage: 0,
       showSpecs: false,
       quantity: 1,
+      // Données d'avis clients réalistes et variées
+      reviews: [
+        {
+          user: 'Alice Dupont',
+          initials: 'AD',
+          photo: 'https://randomuser.me/api/portraits/women/44.jpg',
+          stars: 5,
+          title: 'Excellent produit !',
+          text: 'La qualité est au rendez-vous, la livraison a été rapide et le service client très réactif. Je recommande vivement.',
+          date: '12/04/2024',
+          helpful: 8,
+        },
+        {
+          user: 'Jean Martin',
+          initials: 'JM',
+          photo: 'https://randomuser.me/api/portraits/men/32.jpg',
+          stars: 4,
+          title: 'Bon rapport qualité/prix',
+          text: 'Le produit correspond à la description. Bon rapport qualité/prix, mais l’emballage pourrait être amélioré.',
+          date: '08/04/2024',
+          helpful: 3,
+        },
+        {
+          user: 'Fatou Ndiaye',
+          initials: 'FN',
+          photo: '',
+          stars: 5,
+          title: 'Super expérience',
+          text: 'J’ai adoré mon achat, le design est top et la prise en main facile. Je recommanderai à mes amis.',
+          date: '02/04/2024',
+          helpful: 5,
+        },
+        {
+          user: 'Mohamed Ben Ali',
+          initials: 'MB',
+          photo: 'https://randomuser.me/api/portraits/men/65.jpg',
+          stars: 3,
+          title: 'Correct mais sans plus',
+          text: 'Le produit fonctionne, mais je m’attendais à mieux pour ce prix. Livraison un peu lente.',
+          date: '28/03/2024',
+          helpful: 1,
+        },
+        {
+          user: 'Sophie Legrand',
+          initials: 'SL',
+          photo: 'https://randomuser.me/api/portraits/women/68.jpg',
+          stars: 4,
+          title: 'Très satisfaite',
+          text: 'Produit conforme, facile à utiliser. SAV très pro. Je recommande.',
+          date: '20/03/2024',
+          helpful: 2,
+        },
+      ],
     }
   },
   setup() {
