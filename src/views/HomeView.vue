@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useProductsStore } from '../stores/products'
 
 // Slider dynamique fictif
 const slides = ref([
@@ -40,57 +41,14 @@ const categories = [
   { name: 'Informatique', img: 'https://placehold.co/100x100/0071BC/fff?text=PC' },
 ]
 
-// Produits vedettes fictifs
-const produits = [
-  {
-    nom: 'Smartphone X100',
-    img: 'https://placehold.co/300x200/0071BC/fff?text=Produit+1',
-    prix: '120 000 FCFA',
-    promo: true,
-    nouveaute: false,
-    note: 5,
-  },
-  {
-    nom: 'Casque Bluetooth',
-    img: 'https://placehold.co/300x200/009966/fff?text=Produit+2',
-    prix: '35 000 FCFA',
-    promo: false,
-    nouveaute: true,
-    note: 4,
-  },
-  {
-    nom: 'Montre Connectée',
-    img: 'https://placehold.co/300x200/F4A300/fff?text=Produit+3',
-    prix: '25 000 FCFA',
-    promo: true,
-    nouveaute: false,
-    note: 5,
-  },
-  {
-    nom: 'Aspirateur Robot',
-    img: 'https://placehold.co/300x200/0071BC/fff?text=Produit+4',
-    prix: '80 000 FCFA',
-    promo: false,
-    nouveaute: true,
-    note: 4,
-  },
-  {
-    nom: 'TV 4K Ultra HD',
-    img: 'https://placehold.co/300x200/F4A300/fff?text=Produit+5',
-    prix: '250 000 FCFA',
-    promo: true,
-    nouveaute: false,
-    note: 5,
-  },
-  {
-    nom: 'Chaussures Running',
-    img: 'https://placehold.co/300x200/009966/fff?text=Produit+6',
-    prix: '18 000 FCFA',
-    promo: false,
-    nouveaute: true,
-    note: 4,
-  },
-]
+const productsStore = useProductsStore()
+onMounted(() => {
+  productsStore.generateProducts()
+})
+
+const produits = computed(() => productsStore.getProducts.slice(0, 6))
+const produitsVedettes = computed(() => produits.value.slice(0, 4))
+const produitsNouveautes = computed(() => produits.value.slice(2, 6))
 
 // Témoignages fictifs
 const avis = [
@@ -213,31 +171,36 @@ const faq = [
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         <div
-          v-for="prod in produits.slice(0, 4)"
-          :key="prod.nom"
+          v-for="prod in produitsVedettes"
+          :key="prod.id"
           class="bg-white rounded-lg shadow p-4 flex flex-col relative"
         >
-          <img :src="prod.img" :alt="prod.nom" class="rounded mb-2" />
-          <span
-            v-if="prod.promo"
-            class="absolute top-2 left-2 bg-[#F4A300] text-white text-xs px-2 py-1 rounded-full"
-            >Promo</span
+          <RouterLink :to="`/produit/${prod.id}`">
+            <img
+              :src="prod.image"
+              :alt="prod.name"
+              class="rounded mb-2 cursor-pointer hover:opacity-80 transition"
+            />
+          </RouterLink>
+          <RouterLink
+            :to="`/produit/${prod.id}`"
+            class="font-semibold mb-1 hover:text-[#0071BC] transition cursor-pointer block"
+            >{{ prod.name }}</RouterLink
           >
-          <span
-            v-if="prod.nouveaute"
-            class="absolute top-2 right-2 bg-[#009966] text-white text-xs px-2 py-1 rounded-full"
-            >Nouveau</span
-          >
-          <span class="font-semibold mb-1">{{ prod.nom }}</span>
           <span class="text-yellow-400 mb-1">{{
-            '★'.repeat(prod.note) + '☆'.repeat(5 - prod.note)
+            '★'.repeat(Math.round(prod.rating)) + '☆'.repeat(5 - Math.round(prod.rating))
           }}</span>
-          <span class="text-[#F4A300] font-bold mb-2">{{ prod.prix }}</span>
+          <span class="text-[#F4A300] font-bold mb-2">{{ prod.price }} XAF</span>
           <button
             class="bg-[#009966] text-white rounded py-2 mt-auto hover:bg-[#0071BC] transition"
           >
             Ajouter au panier
           </button>
+          <RouterLink
+            :to="`/produit/${prod.id}`"
+            class="mt-2 inline-block bg-[#0071BC] text-white px-3 py-1 rounded hover:bg-[#009966] transition text-sm font-semibold text-center"
+            >Voir le produit</RouterLink
+          >
         </div>
       </div>
     </section>
@@ -252,21 +215,32 @@ const faq = [
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         <div
-          v-for="prod in produits.slice(2, 6)"
-          :key="prod.nom"
+          v-for="prod in produitsNouveautes"
+          :key="prod.id"
           class="bg-white rounded-lg shadow p-4 flex flex-col"
         >
-          <img :src="prod.img" :alt="prod.nom" class="rounded mb-2" />
-          <span class="font-semibold mb-1">{{ prod.nom }}</span>
+          <RouterLink :to="`/produit/${prod.id}`">
+            <img
+              :src="prod.image"
+              :alt="prod.name"
+              class="rounded mb-2 cursor-pointer hover:opacity-80 transition"
+            />
+          </RouterLink>
+          <span class="font-semibold mb-1">{{ prod.name }}</span>
           <span class="text-yellow-400 mb-1">{{
-            '★'.repeat(prod.note) + '☆'.repeat(5 - prod.note)
+            '★'.repeat(Math.round(prod.rating)) + '☆'.repeat(5 - Math.round(prod.rating))
           }}</span>
-          <span class="text-[#F4A300] font-bold mb-2">{{ prod.prix }}</span>
+          <span class="text-[#F4A300] font-bold mb-2">{{ prod.price }} XAF</span>
           <button
             class="bg-[#009966] text-white rounded py-2 mt-auto hover:bg-[#0071BC] transition"
           >
             Ajouter au panier
           </button>
+          <RouterLink
+            :to="`/produit/${prod.id}`"
+            class="mt-2 inline-block bg-[#0071BC] text-white px-3 py-1 rounded hover:bg-[#009966] transition text-sm font-semibold text-center"
+            >Voir le produit</RouterLink
+          >
         </div>
       </div>
     </section>

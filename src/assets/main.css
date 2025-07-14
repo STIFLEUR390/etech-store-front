@@ -3,3 +3,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Pagination vue-awesome-paginate custom Tailwind styles */
+.pagination-container {
+  @apply flex justify-center items-center gap-2 mt-8;
+}
+.paginate-buttons {
+  @apply bg-white border border-gray-300 text-gray-700 px-3 py-1 rounded-lg font-semibold transition hover:bg-blue-50 hover:text-[#0071BC] shadow-sm;
+}
+.active-page {
+  @apply bg-[#0071BC] text-white border-[#0071BC] shadow font-bold;
+}
+.disabled-paginate-buttons {
+  @apply opacity-50 cursor-not-allowed;
+}
+.number-buttons {
+  @apply mx-1;
+}
+.back-button,
+.next-button {
+  @apply font-bold text-lg px-3 py-1 rounded-lg;
+}
+.starting-breakpoint-button,
+.ending-breakpoint-button {
+  @apply px-2;
+}

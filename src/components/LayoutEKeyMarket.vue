@@ -9,9 +9,13 @@
     <header class="bg-white shadow-sm sticky top-[40px] z-40">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-20 justify-between">
         <!-- Logo -->
-        <div class="flex items-center select-none">
-          <img src="/src/assets/logo.png" alt="E-Key Market" class="h-10 w-auto mr-2" />
-        </div>
+        <RouterLink to="/" class="flex items-center select-none focus:outline-none">
+          <img
+            src="/src/assets/logo.png"
+            alt="E-Key Market"
+            class="h-10 w-auto mr-2 cursor-pointer"
+          />
+        </RouterLink>
         <!-- Barre de recherche centrale -->
         <form class="flex-1 mx-4 max-w-xl flex items-center">
           <input
@@ -48,7 +52,7 @@
         <RouterLink
           to="/categories"
           class="hidden md:inline-block font-semibold text-[#0071BC] hover:text-[#009966] transition mx-2"
-          >Catalogue</RouterLink
+          >Catégories</RouterLink
         >
         <!-- Icônes panier, wishlist, compte utilisateur -->
         <div class="flex items-center gap-4 ml-2">
@@ -160,11 +164,41 @@
           </button>
         </div>
         <!-- Menu mobile hamburger -->
-        <button class="md:hidden ml-2" aria-label="Menu mobile">
+        <button class="md:hidden ml-2" aria-label="Menu mobile" @click="showMobileMenu = true">
           <span class="material-icons text-3xl">menu</span>
         </button>
       </div>
     </header>
+    <!-- Menu mobile drawer -->
+    <transition name="fade">
+      <div v-if="showMobileMenu" class="fixed inset-0 z-50 bg-black bg-opacity-40 flex">
+        <div class="bg-white w-4/5 max-w-xs h-full p-6 overflow-y-auto flex flex-col gap-4">
+          <div class="flex justify-between items-center mb-4">
+            <img src="/src/assets/logo.png" alt="E-Key Market" class="h-8 w-auto" />
+            <button @click="showMobileMenu = false" class="text-gray-500 text-2xl">&times;</button>
+          </div>
+          <RouterLink
+            to="/"
+            class="py-2 font-semibold text-[#0071BC] hover:text-[#009966]"
+            @click="showMobileMenu = false"
+            >Accueil</RouterLink
+          >
+          <RouterLink
+            to="/categories"
+            class="py-2 font-semibold text-[#0071BC] hover:text-[#009966]"
+            @click="showMobileMenu = false"
+            >Catégories</RouterLink
+          >
+          <RouterLink
+            to="#"
+            class="py-2 font-semibold text-[#0071BC] hover:text-[#009966]"
+            @click="showMobileMenu = false"
+            >Connexion</RouterLink
+          >
+        </div>
+        <div class="flex-1" @click="showMobileMenu = false"></div>
+      </div>
+    </transition>
     <!-- Bandeau suivi de commande -->
     <div class="bg-[#F4A300] text-white text-center py-2 text-sm">
       📦 Suivi de commande en temps réel | Assistance chat disponible
@@ -261,6 +295,9 @@
 </template>
 
 <script setup>
+import { RouterLink } from 'vue-router'
+import { ref } from 'vue'
+const showMobileMenu = ref(false)
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }

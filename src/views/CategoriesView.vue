@@ -309,7 +309,25 @@
             :list="false"
             :is-wished="isProductWished(product.id)"
             @toggle-wishlist="handleToggleWishlist"
-          />
+          >
+            <template #image="{ product }">
+              <RouterLink :to="`/produit/${product.id}`">
+                <img
+                  :src="product.image"
+                  :alt="product.name"
+                  class="rounded-t-lg w-full h-48 object-cover cursor-pointer hover:opacity-80 transition"
+                />
+              </RouterLink>
+            </template>
+            <template #title="{ product }">
+              <RouterLink
+                :to="`/produit/${product.id}`"
+                class="font-semibold hover:text-[#0071BC] transition cursor-pointer"
+              >
+                {{ product.name }}
+              </RouterLink>
+            </template>
+          </ProductCard>
         </template>
         <template v-else>
           <div
@@ -338,6 +356,14 @@
           >
             <template #description="{ product }">
               <div class="text-gray-500 text-sm mt-1">{{ product.description }}</div>
+            </template>
+            <template #actions="{ product }">
+              <RouterLink
+                :to="`/produit/${product.id}`"
+                class="mt-2 inline-block bg-[#0071BC] text-white px-3 py-1 rounded hover:bg-[#009966] transition text-sm font-semibold"
+              >
+                Voir le produit
+              </RouterLink>
             </template>
           </ProductCard>
         </template>
@@ -398,44 +424,28 @@
         Aucun produit ne correspond à vos filtres.
       </div>
       <!-- Pagination -->
-      <div class="bg-white rounded-xl shadow-sm p-4 mt-8 flex justify-center">
-        <nav class="inline-flex rounded-md shadow">
-          <button
-            @click="prevPage"
-            :disabled="page === 1"
-            class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-          >
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <button
-            v-for="n in totalPages"
-            :key="n"
-            @click="goToPage(n)"
-            :class="
-              page === n
-                ? 'bg-blue-50 text-blue-600 font-medium'
-                : 'bg-white text-gray-500 hover:bg-gray-50'
-            "
-            class="px-3 py-2 border-t border-b border-gray-300"
-          >
-            {{ n }}
-          </button>
-          <button
-            @click="nextPage"
-            :disabled="page === totalPages"
-            class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-          >
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </nav>
+      <div class="pagination-container">
+        <VueAwesomePaginate
+          :total-items="totalProducts"
+          :items-per-page="itemsPerPage"
+          :max-pages-shown="5"
+          v-model="currentPage"
+          :on-click="onPageChange"
+          prev-button-text="<"
+          next-button-text=">"
+          :show-breakpoint-buttons="true"
+        />
       </div>
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import ProductCard from '../components/ProductCard.vue'
+import { RouterLink } from 'vue-router'
+import VueAwesomePaginate from 'vue-awesome-paginate'
+import { useProductsStore } from '../stores/products'
 
 const view = ref('grid')
 const sortBy = ref('popularity')
@@ -461,129 +471,15 @@ const filters = ref({
   inStock: false,
 })
 
-const categories = [
-  { name: 'Électronique', icon: 'fas fa-tv', color: '#0071BC' },
-  { name: 'Mode', icon: 'fas fa-tshirt', color: '#009966' },
-  { name: 'Maison', icon: 'fas fa-couch', color: '#F4A300' },
-  { name: 'Beauté', icon: 'fas fa-magic', color: '#E91E63' },
-  { name: 'Sport', icon: 'fas fa-basketball-ball', color: '#4CAF50' },
-]
-const brands = [
-  'Samsung',
-  'Apple',
-  'Tecno',
-  'Infinix',
-  'Nokia',
-  'Xiaomi',
-  'Oppo',
-  'Sony',
-  'LG',
-  'HP',
-  'Dell',
-  'Adidas',
-  'Nike',
-  'Puma',
-]
+const productsStore = useProductsStore()
+onMounted(() => {
+  productsStore.generateProducts()
+})
 
-// Génération de produits fictifs
-function randomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min
-}
-const productNames = [
-  'Samsung Galaxy S22 Ultra',
-  'iPhone 14 Pro Max',
-  'Tecno Camon 19 Pro',
-  'Infinix Note 12 VIP',
-  'Nokia G21',
-  'Redmi Note 12 Pro',
-  'Itel S23+',
-  'Oppo Reno 8',
-  'Sony Bravia 4K',
-  'LG OLED TV',
-  'HP Pavilion 15',
-  'Dell XPS 13',
-  'Adidas Ultraboost',
-  'Nike Air Max',
-  'Puma RS-X',
-  'Apple Watch Series 8',
-  'Samsung Galaxy Buds',
-  'Xiaomi Mi Band 7',
-  'Canon EOS 250D',
-  'GoPro Hero 11',
-  'Dyson V11',
-  'Philips Airfryer',
-  'Bose QC45',
-  'JBL Flip 6',
-  'PlayStation 5',
-  'Xbox Series X',
-  'Nintendo Switch',
-  'Fitbit Versa 4',
-  'Huawei MateBook D15',
-  'Lenovo ThinkPad X1',
-  'Lisseur GHD',
-  'Sèche-cheveux Dyson',
-  'Parfum Dior Sauvage',
-  'Crème Nivea',
-  'Tapis Yoga Reebok',
-  'Ballon Adidas',
-  'Vélo Decathlon',
-  'Tente Quechua',
-  'Table basse Ikea',
-  'Canapé Maisons du Monde',
-  'Lampe Philips Hue',
-  'Aspirateur Rowenta',
-  'Montre Fossil',
-  'Sac à dos Eastpak',
-  'Lunettes Ray-Ban',
-  'Baskets Converse',
-  'Baskets New Balance',
-  'Baskets Asics',
-  'Baskets Vans',
-  'Baskets Reebok',
-]
-const productDescriptions = [
-  'Le smartphone idéal pour la photo et la performance.',
-  "L'ordinateur portable parfait pour le travail et le divertissement.",
-  'Des baskets confortables pour le sport et la ville.',
-  'Un accessoire tendance pour tous les styles.',
-  "L'électroménager malin pour la maison.",
-  'Un son immersif pour vos musiques préférées.',
-  'La montre connectée pour suivre votre activité.',
-  'Un objet design et pratique au quotidien.',
-  'La meilleure expérience gaming à la maison.',
-  'Un produit fiable et garanti 2 ans.',
-]
-const products = ref([])
-for (let i = 0; i < 60; i++) {
-  const name = productNames[i % productNames.length]
-  const brand = brands[i % brands.length]
-  const category = categories[i % categories.length].name
-  const price = randomInt(10000, 800000)
-  const oldPrice = Math.random() > 0.7 ? price + randomInt(5000, 50000) : undefined
-  const rating = Math.round((Math.random() * 2 + 3) * 2) / 2 // 3 à 5 étoiles, demi-étoiles
-  const reviews = randomInt(10, 500)
-  const isNew = Math.random() > 0.8
-  const isPromo = Math.random() > 0.7
-  const inStock = Math.random() > 0.15
-  const description = productDescriptions[i % productDescriptions.length]
-  products.value.push({
-    id: i + 1,
-    name,
-    image: `https://placehold.co/300x200/${
-      ['0071BC', '009966', 'F4A300', 'E91E63', '4CAF50'][i % 5]
-    }/fff?text=${encodeURIComponent(name)}`,
-    price,
-    oldPrice,
-    rating,
-    reviews,
-    brand,
-    category,
-    isNew,
-    isPromo,
-    inStock,
-    description,
-  })
-}
+const categories = computed(() => productsStore.getCategories)
+const brands = computed(() => productsStore.getBrands)
+
+const products = computed(() => productsStore.getProducts)
 
 const loading = ref(true)
 
@@ -612,19 +508,27 @@ const filteredProducts = computed(() => {
   return result
 })
 
-const totalPages = computed(() => Math.ceil(filteredProducts.value.length / perPage.value))
-const shownCount = ref(perPage.value)
-const paginatedProducts = computed(() => filteredProducts.value.slice(0, shownCount.value))
+const currentPage = ref(1)
+const itemsPerPage = perPage
+const totalProducts = computed(() => filteredProducts.value.length)
+const paginatedProducts = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  return filteredProducts.value.slice(start, start + itemsPerPage.value)
+})
+
+function onPageChange(page) {
+  currentPage.value = page
+}
 
 // Remet à la valeur du select si on change le nombre à afficher
 watch(perPage, (val) => {
-  shownCount.value = val
+  itemsPerPage.value = val
 })
 
 function loadMore() {
   loading.value = true
   setTimeout(() => {
-    shownCount.value += perPage.value
+    itemsPerPage.value += perPage.value
     loading.value = false
   }, 800)
 }
