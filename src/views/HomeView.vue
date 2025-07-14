@@ -1,273 +1,377 @@
 <script setup>
-// Rien à déclarer pour l’instant
+import { ref, onMounted } from 'vue'
+import { RouterLink } from 'vue-router'
+
+// Slider dynamique fictif
+const slides = ref([
+  {
+    img: 'https://placehold.co/1200x400/0071BC/fff?text=Promo+1',
+    title: "Ventes Flash d'Été",
+    desc: "Jusqu'à -50% sur l'électronique et la mode",
+    cta: 'Découvrir',
+  },
+  {
+    img: 'https://placehold.co/1200x400/009966/fff?text=Promo+2',
+    title: 'Livraison Gratuite',
+    desc: 'Profitez de la livraison offerte dès 50 000 FCFA',
+    cta: 'Acheter maintenant',
+  },
+  {
+    img: 'https://placehold.co/1200x400/F4A300/fff?text=Promo+3',
+    title: 'Nouveautés Mode',
+    desc: 'Découvrez les dernières tendances',
+    cta: 'Voir la collection',
+  },
+])
+const currentSlide = ref(0)
+onMounted(() => {
+  setInterval(() => {
+    currentSlide.value = (currentSlide.value + 1) % slides.value.length
+  }, 3500)
+})
+
+// Catégories fictives
+const categories = [
+  { name: 'Électronique', img: 'https://placehold.co/100x100/009966/fff?text=TV' },
+  { name: 'Mode', img: 'https://placehold.co/100x100/F4A300/fff?text=Mode' },
+  { name: 'Maison', img: 'https://placehold.co/100x100/0071BC/fff?text=Maison' },
+  { name: 'Beauté', img: 'https://placehold.co/100x100/009966/fff?text=Beauté' },
+  { name: 'Sports', img: 'https://placehold.co/100x100/F4A300/fff?text=Sport' },
+  { name: 'Informatique', img: 'https://placehold.co/100x100/0071BC/fff?text=PC' },
+]
+
+// Produits vedettes fictifs
+const produits = [
+  {
+    nom: 'Smartphone X100',
+    img: 'https://placehold.co/300x200/0071BC/fff?text=Produit+1',
+    prix: '120 000 FCFA',
+    promo: true,
+    nouveaute: false,
+    note: 5,
+  },
+  {
+    nom: 'Casque Bluetooth',
+    img: 'https://placehold.co/300x200/009966/fff?text=Produit+2',
+    prix: '35 000 FCFA',
+    promo: false,
+    nouveaute: true,
+    note: 4,
+  },
+  {
+    nom: 'Montre Connectée',
+    img: 'https://placehold.co/300x200/F4A300/fff?text=Produit+3',
+    prix: '25 000 FCFA',
+    promo: true,
+    nouveaute: false,
+    note: 5,
+  },
+  {
+    nom: 'Aspirateur Robot',
+    img: 'https://placehold.co/300x200/0071BC/fff?text=Produit+4',
+    prix: '80 000 FCFA',
+    promo: false,
+    nouveaute: true,
+    note: 4,
+  },
+  {
+    nom: 'TV 4K Ultra HD',
+    img: 'https://placehold.co/300x200/F4A300/fff?text=Produit+5',
+    prix: '250 000 FCFA',
+    promo: true,
+    nouveaute: false,
+    note: 5,
+  },
+  {
+    nom: 'Chaussures Running',
+    img: 'https://placehold.co/300x200/009966/fff?text=Produit+6',
+    prix: '18 000 FCFA',
+    promo: false,
+    nouveaute: true,
+    note: 4,
+  },
+]
+
+// Témoignages fictifs
+const avis = [
+  {
+    nom: 'A. Bamba',
+    img: 'https://placehold.co/80x80/0071BC/fff?text=AB',
+    note: 5,
+    texte: 'Livraison rapide et produits de qualité, je recommande vivement !',
+  },
+  {
+    nom: 'M. Koné',
+    img: 'https://placehold.co/80x80/009966/fff?text=MK',
+    note: 5,
+    texte: "Service client très réactif, j'ai eu toutes mes réponses rapidement.",
+  },
+  {
+    nom: 'Y. Akissi',
+    img: 'https://placehold.co/80x80/F4A300/fff?text=YA',
+    note: 5,
+    texte: "Des promos incroyables, j'ai fait de super économies !",
+  },
+]
+
+// Partenaires fictifs
+const partenaires = [
+  {
+    nom: 'Orange',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Orange_Money_logo.svg',
+  },
+  { nom: 'MTN', img: 'https://upload.wikimedia.org/wikipedia/commons/2/2b/MTN_Group_Logo.svg' },
+  { nom: 'Visa', img: 'https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png' },
+  {
+    nom: 'Mastercard',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png',
+  },
+]
+
+// FAQ fictive
+const faq = [
+  {
+    q: 'Quels sont les moyens de paiement acceptés ?',
+    r: 'Orange Money, MTN MoMo, Visa, Mastercard, Mobile Money.',
+  },
+  { q: 'Quels sont les délais de livraison ?', r: 'Livraison sous 24 à 72h selon la zone.' },
+  {
+    q: 'Comment suivre ma commande ?',
+    r: 'Depuis votre compte ou via le bandeau de suivi en haut du site.',
+  },
+]
 </script>
 
 <template>
   <div>
-    <!-- Hero Section -->
+    <!-- Hero Section : slider dynamique -->
     <section class="relative overflow-hidden">
       <div
         class="relative h-96 md:h-[500px] w-full flex items-center justify-center bg-gradient-to-r from-[#0071BC] to-[#009966]"
       >
-        <div class="text-center px-4 z-10">
-          <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Ventes Flash d'Été</h1>
-          <p class="text-xl text-white mb-6">Jusqu'à -50% sur l'électronique et la mode</p>
-          <button
-            class="bg-[#F4A300] hover:bg-[#e69500] text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 transform hover:scale-105"
+        <transition-group name="fade" tag="div">
+          <div
+            v-for="(slide, i) in slides"
+            :key="i"
+            v-show="currentSlide === i"
+            class="absolute inset-0 flex flex-col items-center justify-center z-10"
           >
-            Découvrir les offres
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow">
+              {{ slide.title }}
+            </h1>
+            <p class="text-xl text-white mb-6 drop-shadow">{{ slide.desc }}</p>
+            <button
+              class="bg-[#F4A300] hover:bg-[#e69500] text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 transform hover:scale-105 mb-4"
+            >
+              {{ slide.cta }}
+            </button>
+          </div>
+        </transition-group>
+        <img
+          :src="slides[currentSlide].img"
+          alt="Slider"
+          class="absolute inset-0 w-full h-full object-cover opacity-30"
+        />
+      </div>
+    </section>
+
+    <!-- Catégories populaires -->
+    <section class="max-w-7xl mx-auto py-12 px-4">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-[#0071BC]">Catégories populaires</h2>
+        <RouterLink
+          to="/categories"
+          class="bg-[#009966] text-white px-4 py-2 rounded hover:bg-[#0071BC] transition"
+        >
+          Explorer toutes les catégories
+        </RouterLink>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-6 gap-6">
+        <RouterLink
+          v-for="cat in categories"
+          :key="cat.name"
+          to="/categories"
+          class="flex flex-col items-center bg-white rounded-lg shadow p-4 hover:shadow-lg transition group cursor-pointer"
+        >
+          <img
+            :src="cat.img"
+            :alt="cat.name"
+            class="mb-2 rounded-full group-hover:scale-110 transition"
+          />
+          <span class="font-semibold group-hover:text-[#009966]">{{ cat.name }}</span>
+        </RouterLink>
+      </div>
+    </section>
+
+    <!-- Ventes Flash & Offres spéciales -->
+    <section class="max-w-7xl mx-auto py-12 px-4">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-[#F4A300]">Ventes Flash</h2>
+        <div class="flex items-center gap-2 text-2xl font-mono text-[#F4A300]">
+          <span>00</span><span>:</span><span>45</span><span>:</span><span>12</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div
+          v-for="prod in produits.slice(0, 4)"
+          :key="prod.nom"
+          class="bg-white rounded-lg shadow p-4 flex flex-col relative"
+        >
+          <img :src="prod.img" :alt="prod.nom" class="rounded mb-2" />
+          <span
+            v-if="prod.promo"
+            class="absolute top-2 left-2 bg-[#F4A300] text-white text-xs px-2 py-1 rounded-full"
+            >Promo</span
+          >
+          <span
+            v-if="prod.nouveaute"
+            class="absolute top-2 right-2 bg-[#009966] text-white text-xs px-2 py-1 rounded-full"
+            >Nouveau</span
+          >
+          <span class="font-semibold mb-1">{{ prod.nom }}</span>
+          <span class="text-yellow-400 mb-1">{{
+            '★'.repeat(prod.note) + '☆'.repeat(5 - prod.note)
+          }}</span>
+          <span class="text-[#F4A300] font-bold mb-2">{{ prod.prix }}</span>
+          <button
+            class="bg-[#009966] text-white rounded py-2 mt-auto hover:bg-[#0071BC] transition"
+          >
+            Ajouter au panier
           </button>
         </div>
       </div>
     </section>
-    <!-- Catégories populaires -->
-    <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl font-bold text-gray-900">Catégories Populaires</h2>
-        <p class="mt-2 text-lg text-gray-600">Parcourez nos catégories les plus demandées</p>
+
+    <!-- Sélection de produits : carrousel nouveautés -->
+    <section class="max-w-7xl mx-auto py-12 px-4">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-[#0071BC]">Nouveautés</h2>
+        <button class="bg-[#F4A300] text-white px-4 py-2 rounded hover:bg-[#e69500] transition">
+          Voir toutes
+        </button>
       </div>
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-        <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition text-center">
-          <div
-            class="w-16 h-16 bg-[#0071BC]/10 rounded-full flex items-center justify-center mx-auto mb-4"
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div
+          v-for="prod in produits.slice(2, 6)"
+          :key="prod.nom"
+          class="bg-white rounded-lg shadow p-4 flex flex-col"
+        >
+          <img :src="prod.img" :alt="prod.nom" class="rounded mb-2" />
+          <span class="font-semibold mb-1">{{ prod.nom }}</span>
+          <span class="text-yellow-400 mb-1">{{
+            '★'.repeat(prod.note) + '☆'.repeat(5 - prod.note)
+          }}</span>
+          <span class="text-[#F4A300] font-bold mb-2">{{ prod.prix }}</span>
+          <button
+            class="bg-[#009966] text-white rounded py-2 mt-auto hover:bg-[#0071BC] transition"
           >
-            <span class="material-icons text-[#0071BC] text-2xl">smartphone</span>
-          </div>
-          <h3 class="font-medium text-gray-900">Smartphones</h3>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition text-center">
-          <div
-            class="w-16 h-16 bg-[#009966]/10 rounded-full flex items-center justify-center mx-auto mb-4"
-          >
-            <span class="material-icons text-[#009966] text-2xl">laptop</span>
-          </div>
-          <h3 class="font-medium text-gray-900">Ordinateurs</h3>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition text-center">
-          <div
-            class="w-16 h-16 bg-[#F4A300]/10 rounded-full flex items-center justify-center mx-auto mb-4"
-          >
-            <span class="material-icons text-[#F4A300] text-2xl">checkroom</span>
-          </div>
-          <h3 class="font-medium text-gray-900">Mode</h3>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition text-center">
-          <div
-            class="w-16 h-16 bg-[#0071BC]/10 rounded-full flex items-center justify-center mx-auto mb-4"
-          >
-            <span class="material-icons text-[#0071BC] text-2xl">home</span>
-          </div>
-          <h3 class="font-medium text-gray-900">Maison</h3>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition text-center">
-          <div
-            class="w-16 h-16 bg-[#009966]/10 rounded-full flex items-center justify-center mx-auto mb-4"
-          >
-            <span class="material-icons text-[#009966] text-2xl">sports_basketball</span>
-          </div>
-          <h3 class="font-medium text-gray-900">Sports</h3>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition text-center">
-          <div
-            class="w-16 h-16 bg-[#F4A300]/10 rounded-full flex items-center justify-center mx-auto mb-4"
-          >
-            <span class="material-icons text-[#F4A300] text-2xl">face_retouching_natural</span>
-          </div>
-          <h3 class="font-medium text-gray-900">Beauté</h3>
+            Ajouter au panier
+          </button>
         </div>
       </div>
     </section>
-    <!-- Produits vedettes -->
-    <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-gray-50 rounded-xl">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl font-bold text-gray-900">Produits Vedettes</h2>
-        <p class="mt-2 text-lg text-gray-600">Nos produits les plus populaires du moment</p>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        <div class="bg-white rounded-xl overflow-hidden shadow-sm transition">
-          <div class="relative pb-[100%] bg-gray-100">
-            <img
-              src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?auto=format&fit=crop&w=500&q=80"
-              alt="Smartphone"
-              class="absolute h-full w-full object-contain p-4"
-            />
-            <div
-              class="absolute top-2 right-2 bg-[#F4A300] text-white text-xs font-bold px-2 py-1 rounded-full"
-            >
-              -20%
-            </div>
-          </div>
-          <div class="p-4">
-            <h3 class="font-medium text-gray-900 mb-1">Samsung Galaxy S23</h3>
-            <div class="flex items-center mb-2">
-              <div class="flex text-yellow-400">
-                <span class="material-icons">star</span>
-                <span class="material-icons">star</span>
-                <span class="material-icons">star</span>
-                <span class="material-icons">star</span>
-                <span class="material-icons">star_half</span>
-              </div>
-              <span class="text-gray-500 text-sm ml-1">(48)</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <div>
-                <span class="text-lg font-bold text-[#0071BC]">450 000 FCFA</span>
-                <span class="text-sm text-gray-500 line-through ml-1">550 000 FCFA</span>
-              </div>
-              <button
-                class="bg-[#009966] hover:bg-[#008055] text-white p-2 rounded-full transition"
-              >
-                <span class="material-icons">shopping_cart</span>
-              </button>
-            </div>
-          </div>
-        </div>
-        <!-- Répéter pour d'autres produits... -->
-      </div>
-    </section>
-    <!-- Ventes Flash -->
-    <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div class="bg-gradient-to-r from-[#0071BC] to-[#009966] rounded-xl p-8 text-white">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-8">
-          <div>
-            <h2 class="text-3xl font-bold mb-2">Ventes Flash</h2>
-            <p class="text-lg">Offres limitées dans le temps - Ne ratez pas l'occasion !</p>
-          </div>
-          <div class="mt-4 md:mt-0">
-            <div class="flex items-center bg-black/20 rounded-lg p-3">
-              <div class="text-center px-3">
-                <div class="text-2xl font-bold">12</div>
-                <div class="text-xs uppercase">Heures</div>
-              </div>
-              <div class="text-2xl font-bold">:</div>
-              <div class="text-center px-3">
-                <div class="text-2xl font-bold">34</div>
-                <div class="text-xs uppercase">Minutes</div>
-              </div>
-              <div class="text-2xl font-bold">:</div>
-              <div class="text-center px-3">
-                <div class="text-2xl font-bold">56</div>
-                <div class="text-xs uppercase">Secondes</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div
-            class="bg-white/10 backdrop-blur-sm rounded-xl p-4 flex items-center border border-white/20"
-          >
-            <div class="w-24 h-24 bg-white rounded-lg flex-shrink-0 overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?auto=format&fit=crop&w=500&q=80"
-                alt="Casque Audio"
-                class="w-full h-full object-contain"
-              />
-            </div>
-            <div class="ml-4">
-              <h3 class="font-medium">Casque Audio Sans Fil</h3>
-              <div class="flex items-center mt-1 text-yellow-400">
-                <span class="material-icons text-xs">star</span>
-                <span class="material-icons text-xs">star</span>
-                <span class="material-icons text-xs">star</span>
-                <span class="material-icons text-xs">star</span>
-                <span class="material-icons text-xs">star_half</span>
-              </div>
-              <div class="mt-2">
-                <span class="font-bold">45 000 FCFA</span>
-                <span class="text-sm line-through ml-1">60 000 FCFA</span>
-              </div>
-            </div>
-          </div>
-          <!-- Répéter pour d'autres ventes flash... -->
+
+    <!-- Avis clients -->
+    <section class="max-w-7xl mx-auto py-12 px-4">
+      <h2 class="text-2xl font-bold mb-6 text-[#0071BC]">Avis clients</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div
+          v-for="a in avis"
+          :key="a.nom"
+          class="bg-white rounded-lg shadow p-6 flex flex-col items-center"
+        >
+          <img :src="a.img" :alt="a.nom" class="rounded-full mb-2" />
+          <div class="flex text-yellow-400 mb-2">{{ '★'.repeat(a.note) }}</div>
+          <p class="text-center text-gray-600 mb-2">"{{ a.texte }}"</p>
+          <span class="font-semibold">{{ a.nom }}</span>
         </div>
       </div>
     </section>
-    <!-- Témoignages clients -->
-    <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl font-bold text-gray-900">Avis de nos clients</h2>
-        <p class="mt-2 text-lg text-gray-600">Des milliers de clients satisfaits !</p>
+
+    <!-- Partenaires / certifications -->
+    <section class="max-w-7xl mx-auto py-12 px-4">
+      <h2 class="text-2xl font-bold mb-6 text-[#0071BC]">Ils nous font confiance</h2>
+      <div class="flex flex-wrap gap-6 items-center justify-center">
+        <img
+          v-for="p in partenaires"
+          :key="p.nom"
+          :src="p.img"
+          :alt="p.nom"
+          class="h-12 bg-white rounded p-2 shadow"
+        />
       </div>
-      <div class="flex overflow-x-auto space-x-6 pb-4">
-        <div class="flex-shrink-0 bg-white rounded-xl shadow-sm p-6 w-80">
-          <div class="flex items-center mb-4">
-            <img
-              src="https://randomuser.me/api/portraits/women/44.jpg"
-              alt="Client"
-              class="w-12 h-12 rounded-full object-cover"
-            />
-            <div class="ml-4">
-              <h4 class="font-medium">Amina Diallo</h4>
-              <div class="flex text-yellow-400 text-sm">
-                <span class="material-icons">star</span>
-                <span class="material-icons">star</span>
-                <span class="material-icons">star</span>
-                <span class="material-icons">star</span>
-                <span class="material-icons">star</span>
-              </div>
-            </div>
-          </div>
-          <p class="text-gray-600">
-            "Commande reçue le lendemain, produit conforme et bien emballé. Je recommande !"
+    </section>
+
+    <!-- Newsletter & fidélisation -->
+    <section class="max-w-7xl mx-auto py-12 px-4">
+      <div
+        class="bg-[#0071BC] rounded-lg p-8 flex flex-col md:flex-row items-center justify-between"
+      >
+        <div class="mb-4 md:mb-0">
+          <h3 class="text-white text-2xl font-bold mb-2">Inscrivez-vous à la newsletter</h3>
+          <p class="text-white">
+            Recevez -5% sur votre première commande et nos offres exclusives chaque semaine !
           </p>
         </div>
-        <!-- Répéter pour d'autres témoignages... -->
-      </div>
-    </section>
-    <!-- Avantages -->
-    <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-gray-50 rounded-xl">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="bg-white p-6 rounded-xl shadow-sm flex items-start">
-          <div class="bg-[#0071BC]/10 p-3 rounded-full mr-4">
-            <span class="material-icons text-[#0071BC] text-xl">local_shipping</span>
-          </div>
-          <div>
-            <h3 class="font-bold text-lg text-gray-900 mb-2">Livraison gratuite</h3>
-            <p class="text-gray-600">Livraison offerte dès 50 000 FCFA partout au pays.</p>
-          </div>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm flex items-start">
-          <div class="bg-[#009966]/10 p-3 rounded-full mr-4">
-            <span class="material-icons text-[#009966] text-xl">lock</span>
-          </div>
-          <div>
-            <h3 class="font-bold text-lg text-gray-900 mb-2">Paiement sécurisé</h3>
-            <p class="text-gray-600">
-              Payez en toute sécurité avec Orange Money, mobile money ou carte bancaire.
-            </p>
-          </div>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm flex items-start">
-          <div class="bg-[#F4A300]/10 p-3 rounded-full mr-4">
-            <span class="material-icons text-[#F4A300] text-xl">headset_mic</span>
-          </div>
-          <div>
-            <h3 class="font-bold text-lg text-gray-900 mb-2">Support 24/7</h3>
-            <p class="text-gray-600">Notre équipe est disponible à tout moment pour vous aider.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Newsletter -->
-    <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div
-        class="bg-gradient-to-r from-[#0071BC] to-[#009966] rounded-xl p-8 text-center text-white"
-      >
-        <h2 class="text-3xl font-bold mb-4">Abonnez-vous à la newsletter</h2>
-        <p class="text-lg mb-6 max-w-2xl mx-auto">
-          Recevez les nouveautés, offres spéciales et bons plans directement dans votre boîte mail.
-        </p>
-        <div class="flex flex-col sm:flex-row justify-center max-w-md mx-auto">
+        <form class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
           <input
             type="email"
-            placeholder="Votre adresse email"
-            class="px-4 py-3 rounded-full w-full sm:rounded-r-none focus:outline-none text-gray-900"
+            placeholder="Votre email"
+            class="rounded px-4 py-2 focus:outline-none"
           />
           <button
-            class="bg-[#F4A300] hover:bg-[#e69500] text-white font-bold py-3 px-6 rounded-full sm:rounded-l-none mt-2 sm:mt-0 transition"
+            type="submit"
+            class="bg-[#F4A300] text-white rounded px-6 py-2 font-bold hover:bg-[#e69500] transition"
           >
-            S'abonner
+            S'inscrire
           </button>
+        </form>
+      </div>
+      <div
+        class="mt-8 bg-white rounded-lg p-8 flex flex-col md:flex-row items-center justify-between shadow"
+      >
+        <div class="mb-4 md:mb-0">
+          <h3 class="text-[#0071BC] text-xl font-bold mb-2">Programme fidélité & Parrainage</h3>
+          <p class="text-gray-700">
+            Cumulez des points à chaque achat et parrainez vos amis pour gagner des bons d'achat !
+          </p>
+        </div>
+        <button class="bg-[#009966] text-white px-6 py-2 rounded hover:bg-[#0071BC] transition">
+          En savoir plus
+        </button>
+      </div>
+    </section>
+
+    <!-- Pourquoi choisir E-Key Market & FAQ -->
+    <section class="max-w-7xl mx-auto py-12 px-4">
+      <div class="grid md:grid-cols-2 gap-8">
+        <div>
+          <h2 class="text-2xl font-bold mb-6 text-[#0071BC]">Pourquoi choisir E-Key Market ?</h2>
+          <ul class="space-y-4">
+            <li class="flex items-center gap-3">
+              <span class="material-icons text-3xl text-[#009966]">local_shipping</span> Livraison
+              rapide et gratuite
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="material-icons text-3xl text-[#0071BC]">security</span> Paiement mobile
+              sécurisé
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="material-icons text-3xl text-[#F4A300]">support_agent</span> Support
+              client 24/7
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="material-icons text-3xl text-[#009966]">verified_user</span> Garantie
+              satisfait ou remboursé
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold mb-6 text-[#0071BC]">FAQ</h2>
+          <div v-for="(item, i) in faq" :key="i" class="mb-4">
+            <div class="font-semibold">Q. {{ item.q }}</div>
+            <div class="text-gray-700">R. {{ item.r }}</div>
+          </div>
         </div>
       </div>
     </section>
@@ -275,4 +379,12 @@
 </template>
 
 <style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>
