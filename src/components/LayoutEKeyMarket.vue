@@ -56,9 +56,9 @@
         >
         <!-- Icônes panier, wishlist, compte utilisateur -->
         <div class="flex items-center gap-4 ml-2">
-          <!-- Panier avec aperçu au hover -->
-          <div class="relative group">
-            <button class="relative group" aria-label="Panier">
+          <!-- Panier avec aperçu au clic -->
+          <div class="relative">
+            <button id="cart-btn" class="relative" aria-label="Panier" @click="toggleCartPreview">
               <span class="material-icons text-2xl text-[#0071BC]">shopping_cart</span>
               <span
                 v-if="cart.itemCount"
@@ -68,7 +68,9 @@
             </button>
             <!-- Aperçu panier dynamique -->
             <div
-              class="absolute right-0 mt-2 w-80 bg-white rounded shadow-lg border border-gray-100 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition z-50"
+              v-if="showCartPreview"
+              id="cart-preview"
+              class="absolute right-0 mt-2 w-80 bg-white rounded shadow-lg border border-gray-100 z-50"
             >
               <div class="p-4 border-b font-bold text-[#0071BC]">Mon panier</div>
               <div v-if="cart.items.length">
@@ -291,20 +293,46 @@
 
 <script setup>
 import { RouterLink, useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useCartStore } from '../stores/cart'
 const showMobileMenu = ref(false)
 const cart = useCartStore()
 const router = useRouter()
+const showCartPreview = ref(false)
+
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 function goToCart() {
   router.push('/panier')
+  showCartPreview.value = false
 }
 function removeCartItem(id) {
   cart.removeFromCart(id)
 }
+function toggleCartPreview() {
+  showCartPreview.value = !showCartPreview.value
+}
+// Gestion du clic en dehors pour fermer l'aperçu
+function handleClickOutside(event) {
+  const cartBtn = document.getElementById('cart-btn')
+  const cartPreview = document.getElementById('cart-preview')
+  if (
+    showCartPreview.value &&
+    cartPreview &&
+    !cartPreview.contains(event.target) &&
+    cartBtn &&
+    !cartBtn.contains(event.target)
+  ) {
+    showCartPreview.value = false
+  }
+}
+onMounted(() => {
+  document.addEventListener('mousedown', handleClickOutside)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('mousedown', handleClickOutside)
+})
 </script>
 
 <style scoped>

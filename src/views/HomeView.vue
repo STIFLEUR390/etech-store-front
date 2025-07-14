@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useProductsStore } from '../stores/products'
+import { useCartStore } from '../stores/cart'
 
 // Slider dynamique fictif
 const slides = ref([
@@ -98,6 +99,13 @@ const faq = [
     r: 'Depuis votre compte ou via le bandeau de suivi en haut du site.',
   },
 ]
+
+const cart = useCartStore()
+
+function addToCart(product) {
+  cart.addToCart(product)
+  alert('Produit ajouté au panier !')
+}
 </script>
 
 <template>
@@ -193,6 +201,7 @@ const faq = [
           <span class="text-[#F4A300] font-bold mb-2">{{ prod.price }} XAF</span>
           <button
             class="bg-[#009966] text-white rounded py-2 mt-auto hover:bg-[#0071BC] transition"
+            @click="addToCart(prod)"
           >
             Ajouter au panier
           </button>
@@ -233,6 +242,7 @@ const faq = [
           <span class="text-[#F4A300] font-bold mb-2">{{ prod.price }} XAF</span>
           <button
             class="bg-[#009966] text-white rounded py-2 mt-auto hover:bg-[#0071BC] transition"
+            @click="addToCart(prod)"
           >
             Ajouter au panier
           </button>

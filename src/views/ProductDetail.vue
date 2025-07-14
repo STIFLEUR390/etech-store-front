@@ -94,6 +94,8 @@
             <div class="flex flex-col sm:flex-row gap-3">
               <button
                 class="flex-1 bg-[#0071BC] hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center"
+                :disabled="quantity < 1"
+                @click="addToCart"
               >
                 <i class="fas fa-shopping-cart mr-2"></i> Ajouter au panier
               </button>
@@ -335,6 +337,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProductsStore } from '../stores/products'
+import { useCartStore } from '../stores/cart'
 
 export default {
   name: 'ProductDetail',
@@ -401,6 +404,7 @@ export default {
   setup() {
     const route = useRoute()
     const productsStore = useProductsStore()
+    const cart = useCartStore()
     productsStore.generateProducts()
     const product = computed(() => productsStore.getProductById(route.params.id))
     // Générer un tableau d'images fictives pour la galerie
@@ -424,7 +428,13 @@ export default {
       if (!product.value) return []
       return productsStore.products.filter((p) => p.id !== product.value.id).slice(4, 7)
     })
-    return { product, images, recommendations, boughtTogether }
+    function addToCart() {
+      if (product.value && this.quantity > 0) {
+        cart.addToCart(product.value, this.quantity)
+        alert('Produit ajouté au panier !')
+      }
+    }
+    return { product, images, recommendations, boughtTogether, cart, addToCart }
   },
   methods: {
     increment() {

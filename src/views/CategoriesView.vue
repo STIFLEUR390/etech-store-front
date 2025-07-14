@@ -327,6 +327,14 @@
                 {{ product.name }}
               </RouterLink>
             </template>
+            <template #actions="{ product }">
+              <button
+                @click="addToCart(product)"
+                class="mt-2 w-full bg-[#0071BC] hover:bg-[#009966] text-white py-2 px-4 rounded-lg text-sm font-medium flex items-center justify-center"
+              >
+                <i class="fas fa-shopping-cart mr-1"></i> Ajouter au panier
+              </button>
+            </template>
           </ProductCard>
         </template>
         <template v-else>
@@ -446,6 +454,7 @@ import ProductCard from '../components/ProductCard.vue'
 import { RouterLink } from 'vue-router'
 import VueAwesomePaginate from 'vue-awesome-paginate'
 import { useProductsStore } from '../stores/products'
+import { useCartStore } from '../stores/cart'
 
 const view = ref('grid')
 const sortBy = ref('popularity')
@@ -543,6 +552,13 @@ function resetFilters() {
 }
 
 const showMobileFilters = ref(false)
+
+const cart = useCartStore()
+function addToCart(product) {
+  cart.addToCart(product)
+  // Optionnel : feedback visuel
+  alert('Produit ajouté au panier !')
+}
 </script>
 
 <style scoped>
