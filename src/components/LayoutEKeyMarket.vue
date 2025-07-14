@@ -61,54 +61,49 @@
             <button class="relative group" aria-label="Panier">
               <span class="material-icons text-2xl text-[#0071BC]">shopping_cart</span>
               <span
+                v-if="cart.itemCount"
                 class="absolute -top-2 -right-2 bg-[#F4A300] text-white text-xs rounded-full px-1"
-                >2</span
+                >{{ cart.itemCount }}</span
               >
             </button>
-            <!-- Aperçu panier -->
+            <!-- Aperçu panier dynamique -->
             <div
               class="absolute right-0 mt-2 w-80 bg-white rounded shadow-lg border border-gray-100 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition z-50"
             >
               <div class="p-4 border-b font-bold text-[#0071BC]">Mon panier</div>
-              <div class="p-4 flex gap-3 items-center border-b">
-                <img
-                  src="https://placehold.co/60x60/0071BC/fff?text=Prod1"
-                  class="rounded"
-                  alt="Produit 1"
-                />
-                <div class="flex-1">
-                  <div class="font-semibold">Smartphone X100</div>
-                  <div class="text-sm text-gray-500">1 x 120 000 FCFA</div>
-                </div>
-                <button class="text-gray-400 hover:text-red-500">
-                  <span class="material-icons text-base">close</span>
-                </button>
-              </div>
-              <div class="p-4 flex gap-3 items-center border-b">
-                <img
-                  src="https://placehold.co/60x60/009966/fff?text=Prod2"
-                  class="rounded"
-                  alt="Produit 2"
-                />
-                <div class="flex-1">
-                  <div class="font-semibold">Casque Bluetooth</div>
-                  <div class="text-sm text-gray-500">2 x 35 000 FCFA</div>
-                </div>
-                <button class="text-gray-400 hover:text-red-500">
-                  <span class="material-icons text-base">close</span>
-                </button>
-              </div>
-              <div class="p-4 flex justify-between items-center">
-                <span class="font-bold">Total :</span>
-                <span class="text-[#F4A300] font-bold">190 000 FCFA</span>
-              </div>
-              <div class="p-4">
-                <button
-                  class="w-full bg-[#009966] text-white rounded py-2 font-bold hover:bg-[#0071BC] transition"
+              <div v-if="cart.items.length">
+                <div
+                  v-for="item in cart.items"
+                  :key="item.id"
+                  class="p-4 flex gap-3 items-center border-b last:border-b-0"
                 >
-                  Voir le panier
-                </button>
+                  <img :src="item.image" class="rounded w-12 h-12 object-cover" :alt="item.name" />
+                  <div class="flex-1">
+                    <div class="font-semibold">{{ item.name }}</div>
+                    <div class="text-sm text-gray-500">
+                      {{ item.quantity }} x {{ item.price.toLocaleString() }} FCFA
+                    </div>
+                  </div>
+                  <button class="text-gray-400 hover:text-red-500" @click="removeCartItem(item.id)">
+                    <span class="material-icons text-base">close</span>
+                  </button>
+                </div>
+                <div class="p-4 flex justify-between items-center">
+                  <span class="font-bold">Total :</span>
+                  <span class="text-[#F4A300] font-bold"
+                    >{{ cart.subtotal.toLocaleString() }} FCFA</span
+                  >
+                </div>
+                <div class="p-4">
+                  <button
+                    @click="goToCart"
+                    class="w-full bg-[#009966] text-white rounded py-2 font-bold hover:bg-[#0071BC] transition"
+                  >
+                    Voir le panier
+                  </button>
+                </div>
               </div>
+              <div v-else class="p-4 text-center text-gray-500">Votre panier est vide.</div>
             </div>
           </div>
           <!-- Wishlist avec aperçu au hover -->
@@ -295,11 +290,20 @@
 </template>
 
 <script setup>
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { ref } from 'vue'
+import { useCartStore } from '../stores/cart'
 const showMobileMenu = ref(false)
+const cart = useCartStore()
+const router = useRouter()
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+function goToCart() {
+  router.push('/panier')
+}
+function removeCartItem(id) {
+  cart.removeFromCart(id)
 }
 </script>
 

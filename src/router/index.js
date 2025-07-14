@@ -22,6 +22,11 @@ const routes = [
         name: 'ProductDetail',
         component: () => import('../views/ProductDetail.vue'),
       },
+      {
+        path: '/panier',
+        name: 'Cart',
+        component: () => import('../views/CartView.vue'),
+      },
     ],
   },
 ]
