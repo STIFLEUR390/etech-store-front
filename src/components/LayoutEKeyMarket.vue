@@ -67,46 +67,56 @@
               >
             </button>
             <!-- Aperçu panier dynamique -->
-            <div
-              v-if="showCartPreview"
-              id="cart-preview"
-              class="absolute right-0 mt-2 w-80 bg-white rounded shadow-lg border border-gray-100 z-50"
-            >
-              <div class="p-4 border-b font-bold text-[#0071BC]">Mon panier</div>
-              <div v-if="cart.items.length">
-                <div
-                  v-for="item in cart.items"
-                  :key="item.id"
-                  class="p-4 flex gap-3 items-center border-b last:border-b-0"
-                >
-                  <img :src="item.image" class="rounded w-12 h-12 object-cover" :alt="item.name" />
-                  <div class="flex-1">
-                    <div class="font-semibold">{{ item.name }}</div>
-                    <div class="text-sm text-gray-500">
-                      {{ item.quantity }} x {{ item.price.toLocaleString() }} FCFA
+            <transition name="cart-fade-slide">
+              <div
+                v-if="showCartPreview"
+                id="cart-preview"
+                class="absolute right-0 mt-2 w-80 bg-white rounded shadow-lg border border-gray-100 z-50"
+                ref="cartPreviewRef"
+              >
+                <div class="p-4 border-b font-bold text-[#0071BC]">Mon panier</div>
+                <div v-if="cart.items.length">
+                  <div
+                    v-for="item in cart.items"
+                    :key="item.id"
+                    class="p-4 flex gap-3 items-center border-b last:border-b-0"
+                  >
+                    <img
+                      :src="item.image"
+                      class="rounded w-12 h-12 object-cover"
+                      :alt="item.name"
+                    />
+                    <div class="flex-1">
+                      <div class="font-semibold">{{ item.name }}</div>
+                      <div class="text-sm text-gray-500">
+                        {{ item.quantity }} x {{ item.price.toLocaleString() }} FCFA
+                      </div>
                     </div>
+                    <button
+                      class="text-gray-400 hover:text-red-500"
+                      @click="removeCartItem(item.id)"
+                    >
+                      <span class="material-icons text-base">close</span>
+                    </button>
                   </div>
-                  <button class="text-gray-400 hover:text-red-500" @click="removeCartItem(item.id)">
-                    <span class="material-icons text-base">close</span>
-                  </button>
+                  <div class="p-4 flex justify-between items-center">
+                    <span class="font-bold">Total :</span>
+                    <span class="text-[#F4A300] font-bold"
+                      >{{ cart.subtotal.toLocaleString() }} FCFA</span
+                    >
+                  </div>
+                  <div class="p-4">
+                    <button
+                      @click="goToCart"
+                      class="w-full bg-[#009966] text-white rounded py-2 font-bold hover:bg-[#0071BC] transition"
+                    >
+                      Voir le panier
+                    </button>
+                  </div>
                 </div>
-                <div class="p-4 flex justify-between items-center">
-                  <span class="font-bold">Total :</span>
-                  <span class="text-[#F4A300] font-bold"
-                    >{{ cart.subtotal.toLocaleString() }} FCFA</span
-                  >
-                </div>
-                <div class="p-4">
-                  <button
-                    @click="goToCart"
-                    class="w-full bg-[#009966] text-white rounded py-2 font-bold hover:bg-[#0071BC] transition"
-                  >
-                    Voir le panier
-                  </button>
-                </div>
+                <div v-else class="p-4 text-center text-gray-500">Votre panier est vide.</div>
               </div>
-              <div v-else class="p-4 text-center text-gray-500">Votre panier est vide.</div>
-            </div>
+            </transition>
           </div>
           <!-- Wishlist avec aperçu au hover -->
           <div class="relative group">
@@ -299,6 +309,7 @@ const showMobileMenu = ref(false)
 const cart = useCartStore()
 const router = useRouter()
 const showCartPreview = ref(false)
+let cartPreviewRef = null
 
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -313,17 +324,8 @@ function removeCartItem(id) {
 function toggleCartPreview() {
   showCartPreview.value = !showCartPreview.value
 }
-// Gestion du clic en dehors pour fermer l'aperçu
 function handleClickOutside(event) {
-  const cartBtn = document.getElementById('cart-btn')
-  const cartPreview = document.getElementById('cart-preview')
-  if (
-    showCartPreview.value &&
-    cartPreview &&
-    !cartPreview.contains(event.target) &&
-    cartBtn &&
-    !cartBtn.contains(event.target)
-  ) {
+  if (showCartPreview.value && cartPreviewRef && !cartPreviewRef.contains(event.target)) {
     showCartPreview.value = false
   }
 }
@@ -352,5 +354,19 @@ onBeforeUnmount(() => {
   direction: ltr;
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
+}
+.cart-fade-slide-enter-active,
+.cart-fade-slide-leave-active {
+  transition: opacity 0.25s, transform 0.25s;
+}
+.cart-fade-slide-enter-from,
+.cart-fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.cart-fade-slide-enter-to,
+.cart-fade-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>

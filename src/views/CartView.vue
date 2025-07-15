@@ -149,11 +149,12 @@
             </div>
           </div>
           <!-- CTA -->
-          <button
-            class="w-full bg-primary text-white py-3 rounded-lg font-semibold text-lg mt-2 hover:shadow-md transition"
+          <RouterLink
+            to="/checkout"
+            class="w-full block mt-3 bg-[#0071BC] text-white py-3 rounded-lg font-semibold text-lg text-center hover:bg-[#005fa3] transition shadow"
           >
-            Procéder au paiement
-          </button>
+            Passer à la commande
+          </RouterLink>
         </div>
       </div>
     </div>
@@ -163,6 +164,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useCartStore } from '../stores/cart'
+import { RouterLink } from 'vue-router'
 const cart = useCartStore()
 const promoInput = ref(cart.promoCode)
 
