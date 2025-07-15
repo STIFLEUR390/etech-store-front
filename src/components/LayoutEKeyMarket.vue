@@ -165,15 +165,51 @@
               </div>
             </div>
           </div>
-          <!-- Compte utilisateur -->
-          <button class="relative group" aria-label="Compte utilisateur">
-            <span class="material-icons text-2xl text-gray-500">person</span>
+          <!-- Compte utilisateur (dropdown desktop) -->
+          <div class="relative hidden md:block">
+            <button
+              @click="toggleUserDropdown"
+              class="relative group"
+              aria-label="Compte utilisateur"
+            >
+              <span class="material-icons text-2xl text-gray-500">person</span>
+            </button>
+            <!-- Dropdown desktop : ajoute le lien Mon compte en haut -->
+            <transition name="fade">
+              <div
+                v-if="showUserDropdown"
+                ref="userDropdownRef"
+                class="absolute right-0 mt-2 w-56 bg-white rounded shadow-lg border border-gray-100 z-50 py-2"
+              >
+                <RouterLink
+                  to="/user/dashboard"
+                  class="block px-4 py-2 text-[#0071BC] hover:bg-gray-50 font-bold flex items-center gap-2 border-b border-gray-100 mb-1"
+                >
+                  <span class="material-icons">person</span> Mon compte
+                </RouterLink>
+                <RouterLink
+                  to="/auth/login"
+                  class="block px-4 py-2 text-[#0071BC] hover:bg-gray-50 font-semibold"
+                  >Connexion</RouterLink
+                >
+                <RouterLink
+                  to="/auth/register"
+                  class="block px-4 py-2 text-[#009966] hover:bg-gray-50 font-semibold"
+                  >Créer un compte</RouterLink
+                >
+                <RouterLink
+                  to="/auth/forgot-password"
+                  class="block px-4 py-2 text-[#F4A300] hover:bg-gray-50 font-medium"
+                  >Mot de passe oublié ?</RouterLink
+                >
+              </div>
+            </transition>
+          </div>
+          <!-- Menu mobile hamburger -->
+          <button class="md:hidden ml-2" aria-label="Menu mobile" @click="showMobileMenu = true">
+            <span class="material-icons text-3xl">menu</span>
           </button>
         </div>
-        <!-- Menu mobile hamburger -->
-        <button class="md:hidden ml-2" aria-label="Menu mobile" @click="showMobileMenu = true">
-          <span class="material-icons text-3xl">menu</span>
-        </button>
       </div>
     </header>
     <!-- Menu mobile drawer -->
@@ -197,10 +233,35 @@
             >Catégories</RouterLink
           >
           <RouterLink
-            to="#"
+            to="/user/dashboard"
+            class="py-2 font-bold text-[#0071BC] hover:text-[#009966] flex items-center gap-2 border-b border-gray-100 mb-1"
+            @click="showMobileMenu = false"
+          >
+            <span class="material-icons">person</span> Mon compte
+          </RouterLink>
+          <RouterLink
+            to="/auth/login"
             class="py-2 font-semibold text-[#0071BC] hover:text-[#009966]"
             @click="showMobileMenu = false"
             >Connexion</RouterLink
+          >
+          <RouterLink
+            to="/auth/register"
+            class="py-2 font-semibold text-[#009966] hover:text-[#0071BC]"
+            @click="showMobileMenu = false"
+            >Créer un compte</RouterLink
+          >
+          <RouterLink
+            to="/auth/forgot-password"
+            class="py-2 font-medium text-[#F4A300] hover:text-[#0071BC]"
+            @click="showMobileMenu = false"
+            >Mot de passe oublié</RouterLink
+          >
+          <RouterLink
+            to="/auth/reset-password"
+            class="py-2 font-medium text-gray-500 hover:text-[#0071BC]"
+            @click="showMobileMenu = false"
+            >Réinitialiser mot de passe</RouterLink
           >
         </div>
         <div class="flex-1" @click="showMobileMenu = false"></div>
@@ -310,6 +371,8 @@ const cart = useCartStore()
 const router = useRouter()
 const showCartPreview = ref(false)
 let cartPreviewRef = null
+const showUserDropdown = ref(false)
+let userDropdownRef = null
 
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -324,6 +387,19 @@ function removeCartItem(id) {
 function toggleCartPreview() {
   showCartPreview.value = !showCartPreview.value
 }
+function toggleUserDropdown() {
+  showUserDropdown.value = !showUserDropdown.value
+}
+function handleUserDropdownClickOutside(event) {
+  if (showUserDropdown.value && userDropdownRef && !userDropdownRef.contains(event.target)) {
+    showUserDropdown.value = false
+  }
+}
+function handleUserDropdownEsc(event) {
+  if (showUserDropdown.value && event.key === 'Escape') {
+    showUserDropdown.value = false
+  }
+}
 function handleClickOutside(event) {
   if (showCartPreview.value && cartPreviewRef && !cartPreviewRef.contains(event.target)) {
     showCartPreview.value = false
@@ -331,9 +407,13 @@ function handleClickOutside(event) {
 }
 onMounted(() => {
   document.addEventListener('mousedown', handleClickOutside)
+  document.addEventListener('mousedown', handleUserDropdownClickOutside)
+  document.addEventListener('keydown', handleUserDropdownEsc)
 })
 onBeforeUnmount(() => {
   document.removeEventListener('mousedown', handleClickOutside)
+  document.removeEventListener('mousedown', handleUserDropdownClickOutside)
+  document.removeEventListener('keydown', handleUserDropdownEsc)
 })
 </script>
 
